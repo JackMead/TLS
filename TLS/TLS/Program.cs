@@ -23,7 +23,7 @@ namespace TLS
 
             //Find all three-letter-sequences from the text
             string pattern = @"\w\w\w";
-            Dictionary<string, int> tlsDictionary = findTLS(text,pattern);
+            Dictionary<string, int> tlsDictionary = findTLS(text, pattern);
             findByOccurences(tlsDictionary, 63);
             printMostCommonSequences(tlsDictionary, 10);
             userInput(tlsDictionary);
@@ -33,6 +33,7 @@ namespace TLS
             Dictionary<string, int> ignoredSpaceTLSDictionary = findTLS(text, altPattern);
             printMostCommonSequences(ignoredSpaceTLSDictionary, 10);
 
+            //Repeats the first steps of above using (here the same) text found online
             tlsFromWeb();
         }
 
@@ -43,14 +44,14 @@ namespace TLS
             string pattern = @"\w\w\w";
 
             WebClient client = new WebClient();
-            
+
             Stream data = client.OpenRead(url);
             StreamReader reader = new StreamReader(data);
             string s = reader.ReadToEnd();
             data.Close();
             reader.Close();
 
-            
+
             Dictionary<string, int> tlsDictionary = findTLS(s, pattern);
 
         }
@@ -69,34 +70,28 @@ namespace TLS
             }
         }
 
-        private void printMostCommonSequences(Dictionary<string, int> tlsDictionary,int numToPrint)
+        private void printMostCommonSequences(Dictionary<string, int> tlsDictionary, int numToPrint)
         {
             //Find the 10 largest number of occurrences
-            List<int> listOfOccurences = new List<int>();
-            foreach(string s in tlsDictionary.Keys)
+            var topTen = tlsDictionary.OrderByDescending(p => p.Value).Take(10);
+            
+            foreach (KeyValuePair<string, int> s in topTen)
             {
-                listOfOccurences.Add(tlsDictionary[s]);
-            }
-            listOfOccurences.Sort();
-            listOfOccurences.Reverse();
-            for(int i = 0; i < 10; i++)
-            {
-                foreach(string s in tlsDictionary.Keys)
-                {
-                    if (tlsDictionary[s] == listOfOccurences[i])
-                    {
-                        Console.WriteLine((i + 1) + ". " + s + " appears " + tlsDictionary[s] + " times");
-                    }
-                }
+
+                Console.WriteLine(s.Key + " appears " + s.Value + " times");
+
             }
 
-            Console.WriteLine("There are a total of " + listOfOccurences.Sum() + " three letter sequences");
+            Console.WriteLine("There are a total of " + tlsDictionary.Values.Sum()+ " three letter sequences");
         }
 
         private void findByOccurences(Dictionary<string, int> tlsDictionary, int occurences)
         {
             bool exampleFound = false;
-            foreach(string tls in tlsDictionary.Keys)
+
+            //string[] sequences = tlsDictionary.Select( p => tlsDictionary[p] ==occurences);
+
+            foreach (string tls in tlsDictionary.Keys)
             {
                 if (tlsDictionary[tls] == occurences)
                 {
@@ -111,12 +106,12 @@ namespace TLS
             }
         }
 
-        private Dictionary<string,int> findTLS(string text, string pattern)
+        private Dictionary<string, int> findTLS(string text, string pattern)
         {
-            
-            
-            Dictionary<string, int> tlsDictionary = new Dictionary<string, int> {};
-                        
+
+
+            Dictionary<string, int> tlsDictionary = new Dictionary<string, int> { };
+
             Regex regexObj = new Regex(pattern);
             Match matchObj = regexObj.Match(text);
             while (matchObj.Success)
@@ -131,7 +126,7 @@ namespace TLS
                     tlsDictionary.Add(tlsLower, 1);
                 }
                 matchObj = regexObj.Match(text, matchObj.Index + 1);
-            }        
+            }
 
             Console.WriteLine("The TLS tra appears " + tlsDictionary["tra"] + " times");
 
