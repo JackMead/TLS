@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TLS
 {
@@ -112,17 +110,16 @@ namespace TLS
                 Console.WriteLine(tls.Key);
             }
         }
-
+        
         private string GetTextFromWeb(string url)
         {
             WebClient client = new WebClient();
             Stream data = client.OpenRead(url);
-            StreamReader reader = new StreamReader(data);
-            string s = reader.ReadToEnd();
+            string webtext;
+            using (StreamReader reader = new StreamReader(data)) { webtext = reader.ReadToEnd(); }
             data.Close();
-            reader.Close();
 
-            return s;
+            return webtext;
         }
 
         private string GetText()
