@@ -41,7 +41,8 @@ namespace TLS
         {
             //TODO
             string url = @"https://raw.githubusercontent.com/CorndelWithSoftwire/ThreeLetterSequences/master/SampleText.txt";
-            string pattern = @"\w\w\w";
+            //Overwritten for checking
+            //url = @"https://corndeltraining.softwire.com/2CWM-Bootcamp/03-ThreeLetterSequences/LearningGuide.html";
 
             WebClient client = new WebClient();
 
@@ -51,7 +52,8 @@ namespace TLS
             data.Close();
             reader.Close();
 
-
+            string pattern = @"\w\w\w";
+            Console.WriteLine(s);
             Dictionary<string, int> tlsDictionary = findTLS(s, pattern);
 
         }
@@ -74,33 +76,27 @@ namespace TLS
         {
             //Find the 10 largest number of occurrences
             var topTen = tlsDictionary.OrderByDescending(p => p.Value).Take(10);
-            
+
             foreach (KeyValuePair<string, int> s in topTen)
             {
-
                 Console.WriteLine(s.Key + " appears " + s.Value + " times");
-
             }
 
-            Console.WriteLine("There are a total of " + tlsDictionary.Values.Sum()+ " three letter sequences");
+            Console.WriteLine("There are a total of " + tlsDictionary.Values.Sum() + " three letter sequences");
         }
 
         private void findByOccurences(Dictionary<string, int> tlsDictionary, int occurences)
         {
-            bool exampleFound = false;
 
-            //string[] sequences = tlsDictionary.Select( p => tlsDictionary[p] ==occurences);
+            var sequences = tlsDictionary.Where(p => tlsDictionary[p.Key] == occurences);
 
-            foreach (string tls in tlsDictionary.Keys)
+            foreach (var tls in sequences)
             {
-                if (tlsDictionary[tls] == occurences)
-                {
-                    Console.WriteLine(tls + " occurs " + occurences + " times");
-                    exampleFound = true;
-                }
+                Console.WriteLine(tls.Key + " occurs " + occurences + " times");
             }
 
-            if (!exampleFound)
+            //Output if there are no such results
+            if (sequences.Count() == 0)
             {
                 Console.WriteLine("No TLS occurs " + occurences + " times.");
             }
