@@ -21,34 +21,50 @@ namespace TLS
             string text = getText();
 
             string pattern = @"\w\w\w";
-            findTLS(text,pattern);
+            Dictionary<string, int> tlsDictionary = findTLS(text,pattern);
 
-            
+            Console.WriteLine("The TLS pre appears: " + tlsDictionary["pre"] + " times");
+
+            findByOccurences(tlsDictionary, 63);
 
         }
 
-        private void findTLS(string text, string pattern)
+        private void findByOccurences(Dictionary<string, int> tlsDictionary, int occurences)
+        {
+            foreach(string tls in tlsDictionary.Keys)
+            {
+                if (tlsDictionary[tls] == occurences)
+                {
+                    Console.WriteLine(tls + " also occurs " + occurences + " times");
+                }
+            }
+        }
+
+        private Dictionary<string,int> findTLS(string text, string pattern)
         {
             
-            Regex rgx = new Regex(pattern, RegexOptions.IgnoreCase);
+            
             Dictionary<string, int> tlsDictionary = new Dictionary<string, int> {};
-            MatchCollection matches = rgx.Matches(text);
-
-            foreach (Match match in matches)
+                        
+            Regex regexObj = new Regex(pattern);
+            Match matchObj = regexObj.Match(text);
+            while (matchObj.Success)
             {
-                Console.WriteLine(match.Value);
-                if (tlsDictionary.ContainsKey(match.Value))
+                string tlsLower = matchObj.Value.ToLower();
+                if (tlsDictionary.ContainsKey(tlsLower))
                 {
-                    tlsDictionary[match.Value] += 1;
+                    tlsDictionary[tlsLower] += 1;
                 }
                 else
                 {
-                    tlsDictionary.Add(match.Value, 1);
+                    tlsDictionary.Add(tlsLower, 1);
                 }
-            }
-        
+                matchObj = regexObj.Match(text, matchObj.Index + 1);
+            }        
 
             Console.WriteLine("The TLS tra appears " + tlsDictionary["tra"] + " times");
+
+            return tlsDictionary;
         }
 
         private string getText()
