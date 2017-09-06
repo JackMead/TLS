@@ -26,8 +26,28 @@ namespace TLS
             Console.WriteLine("The TLS pre appears: " + tlsDictionary["pre"] + " times");
 
             findByOccurences(tlsDictionary, 63);
+
             printMostCommonSequences(tlsDictionary, 10);
 
+            userInput(tlsDictionary);
+
+            string altPattern = @"((\w)\s?(\w)\s?(\w))";
+            Dictionary<string, int> ignoredSpaceTLSDictionary = findTLS(text, altPattern);
+            printMostCommonSequences(ignoredSpaceTLSDictionary, 10);
+        }
+
+        private void userInput(Dictionary<string, int> tlsDictionary)
+        {
+            Console.WriteLine("Input an integer, and we'll see which tls occur that often");
+            string input = Console.ReadLine();
+            if (int.TryParse(input, out int result))
+            {
+                findByOccurences(tlsDictionary, result);
+            }
+            else
+            {
+                Console.WriteLine("Sorry, didn't understand that. Maybe next time");
+            }
         }
 
         private void printMostCommonSequences(Dictionary<string, int> tlsDictionary,int numToPrint)
@@ -50,16 +70,25 @@ namespace TLS
                     }
                 }
             }
+
+            Console.WriteLine("There are a total of " + listOfOccurences.Sum() + " three letter sequences");
         }
 
         private void findByOccurences(Dictionary<string, int> tlsDictionary, int occurences)
         {
+            bool exampleFound = false;
             foreach(string tls in tlsDictionary.Keys)
             {
                 if (tlsDictionary[tls] == occurences)
                 {
-                    Console.WriteLine(tls + " also occurs " + occurences + " times");
+                    Console.WriteLine(tls + " occurs " + occurences + " times");
+                    exampleFound = true;
                 }
+            }
+
+            if (!exampleFound)
+            {
+                Console.WriteLine("No TLS occurs " + occurences + " times.");
             }
         }
 
@@ -85,7 +114,7 @@ namespace TLS
                 matchObj = regexObj.Match(text, matchObj.Index + 1);
             }        
 
-            Console.WriteLine("The TLS tra appears " + tlsDictionary["tra"] + " times");
+            Console.WriteLine("The TLS tra appears, including holding whitespace " + tlsDictionary["tra"] + " times");
 
             return tlsDictionary;
         }
