@@ -26,7 +26,30 @@ namespace TLS
             Console.WriteLine("The TLS pre appears: " + tlsDictionary["pre"] + " times");
 
             findByOccurences(tlsDictionary, 63);
+            printMostCommonSequences(tlsDictionary, 10);
 
+        }
+
+        private void printMostCommonSequences(Dictionary<string, int> tlsDictionary,int numToPrint)
+        {
+            //Find the 10 largest number of occurrences
+            List<int> listOfOccurences = new List<int>();
+            foreach(string s in tlsDictionary.Keys)
+            {
+                listOfOccurences.Add(tlsDictionary[s]);
+            }
+            listOfOccurences.Sort();
+            listOfOccurences.Reverse();
+            for(int i = 0; i < 10; i++)
+            {
+                foreach(string s in tlsDictionary.Keys)
+                {
+                    if (tlsDictionary[s] == listOfOccurences[i])
+                    {
+                        Console.WriteLine((i + 1) + ". " + s + " appears " + tlsDictionary[s] + " times");
+                    }
+                }
+            }
         }
 
         private void findByOccurences(Dictionary<string, int> tlsDictionary, int occurences)
