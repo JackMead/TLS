@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -20,20 +21,38 @@ namespace TLS
         {
             string text = getText();
 
+            //Find all three-letter-sequences from the text
             string pattern = @"\w\w\w";
             Dictionary<string, int> tlsDictionary = findTLS(text,pattern);
-
-            Console.WriteLine("The TLS pre appears: " + tlsDictionary["pre"] + " times");
-
             findByOccurences(tlsDictionary, 63);
-
             printMostCommonSequences(tlsDictionary, 10);
-
             userInput(tlsDictionary);
 
+            //Find all three-letter-sequences from the text ignoring whitespace
             string altPattern = @"((\w)\s?(\w)\s?(\w))";
             Dictionary<string, int> ignoredSpaceTLSDictionary = findTLS(text, altPattern);
             printMostCommonSequences(ignoredSpaceTLSDictionary, 10);
+
+            tlsFromWeb();
+        }
+
+        private void tlsFromWeb()
+        {
+            //TODO
+            string url = @"https://raw.githubusercontent.com/CorndelWithSoftwire/ThreeLetterSequences/master/SampleText.txt";
+            string pattern = @"\w\w\w";
+
+            WebClient client = new WebClient();
+            
+            Stream data = client.OpenRead(url);
+            StreamReader reader = new StreamReader(data);
+            string s = reader.ReadToEnd();
+            data.Close();
+            reader.Close();
+
+            
+            Dictionary<string, int> tlsDictionary = findTLS(s, pattern);
+
         }
 
         private void userInput(Dictionary<string, int> tlsDictionary)
@@ -114,7 +133,7 @@ namespace TLS
                 matchObj = regexObj.Match(text, matchObj.Index + 1);
             }        
 
-            Console.WriteLine("The TLS tra appears, including holding whitespace " + tlsDictionary["tra"] + " times");
+            Console.WriteLine("The TLS tra appears " + tlsDictionary["tra"] + " times");
 
             return tlsDictionary;
         }
